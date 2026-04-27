@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LifeOS — Configurando seu sistema</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="js/core/config.js"></script>
+<style>
+:root{--bg:#fff;--text:#000;--t2:#555;--t3:#999;--accent:#a855f7;--acc-bg:rgba(168,85,247,.07);--border:#e8e8e8;--ok:#10b981;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(168,85,247,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+.header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:.5rem;font-size:1rem;font-weight:800;letter-spacing:-.04em;}
+.logo-icon{width:28px;height:28px;border-radius:7px;background:#000;display:flex;align-items:center;justify-content:center;}
+.progress-bar-wrap{flex:1;max-width:320px;margin:0 2rem;}
+.progress-bar-bg{height:4px;background:var(--border);border-radius:999px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--accent);border-radius:999px;transition:width .5s cubic-bezier(.16,1,.3,1);}
+.progress-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.35rem;display:flex;justify-content:space-between;}
+.step-count{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--t3);font-weight:500;}
+.main{position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:center;padding:80px 1.5rem 120px;min-height:100vh;}
+.question-screen{width:100%;max-width:580px;animation:fadeIn .4s cubic-bezier(.16,1,.3,1) both;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.question-screen.exit{animation:fadeOut .25s ease both;}
+@keyframes fadeOut{to{opacity:0;transform:translateY(-12px)}}
+.block-tag{display:inline-flex;align-items:center;gap:.4rem;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);background:var(--acc-bg);border:1px solid rgba(168,85,247,.2);border-radius:999px;padding:.3rem .75rem;margin-bottom:1.5rem;}
+.q-number{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--t3);font-weight:500;margin-bottom:.5rem;}
+.q-title{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;letter-spacing:-.04em;line-height:1.25;margin-bottom:.75rem;}
+.q-hint{font-size:.85rem;color:var(--t2);line-height:1.6;margin-bottom:1.5rem;}
+.form-input{width:100%;padding:1rem 1.1rem;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--text);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;margin-bottom:1rem;resize:none;}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(168,85,247,.1);}
+.form-input::placeholder{color:var(--t3);}
+textarea.form-input{min-height:100px;line-height:1.6;}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.5rem;}
+.opt-btn{padding:.85rem 1rem;border:1.5px solid var(--border);border-radius:10px;background:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;color:var(--text);cursor:pointer;text-align:left;transition:all .2s;line-height:1.4;}
+.opt-btn:hover{border-color:var(--accent);background:var(--acc-bg);}
+.opt-btn.selected{border-color:var(--accent);background:var(--acc-bg);color:var(--accent);font-weight:700;}
+.opt-btn .opt-icon{font-size:1.1rem;display:block;margin-bottom:.3rem;}
+.opt-btn .opt-label{font-size:.82rem;color:var(--t3);}
+.slider-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--t3);font-weight:600;margin-bottom:.5rem;}
+.slider-dots{display:flex;gap:.4rem;}
+.s-dot{flex:1;height:40px;border:1.5px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:var(--t3);transition:all .15s;}
+.s-dot:hover{border-color:var(--accent);color:var(--accent);}
+.s-dot.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.nav-buttons{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.btn-back{height:48px;padding:0 1.5rem;border:1.5px solid var(--border);border-radius:10px;background:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;color:var(--t2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;}
+.btn-back:hover{border-color:#000;color:#000;}
+.btn-back:disabled{opacity:.3;cursor:not-allowed;}
+.btn-next{flex:1;max-width:280px;height:48px;border:none;border-radius:10px;background:#000;color:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.btn-next:hover{background:#1a1a1a;transform:translateY(-1px);}
+.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.skip-btn{font-size:.78rem;color:var(--t3);background:none;border:none;font-family:'DM Sans',sans-serif;cursor:pointer;padding:.5rem;transition:color .2s;}
+.skip-btn:hover{color:var(--t2);}
+.save-indicator{font-size:.65rem;color:var(--ok);display:flex;align-items:center;gap:.3rem;opacity:0;transition:opacity .3s;}
+.save-indicator.visible{opacity:1;}
+.finish-screen{text-align:center;padding:2rem;max-width:480px;animation:fadeIn .6s both;}
+.finish-icon{width:72px;height:72px;border-radius:50%;background:var(--acc-bg);border:2px solid rgba(168,85,247,.2);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1.5rem;}
+.finish-title{font-size:2rem;font-weight:800;letter-spacing:-.04em;margin-bottom:.75rem;}
+.finish-title span{color:var(--accent);}
+.finish-sub{font-size:.9rem;color:var(--t2);line-height:1.6;margin-bottom:2rem;}
+.finish-generating{background:#fafafa;border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:2rem;text-align:left;}
+.gen-item{display:flex;align-items:center;gap:.75rem;padding:.4rem 0;font-size:.82rem;color:var(--t2);font-weight:500;}
+.gen-dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .3s;}
+.gen-dot.done{background:var(--ok);}
+.gen-dot.loading{background:var(--accent);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.btn-dashboard{width:100%;height:52px;border:none;border-radius:12px;background:#000;color:#fff;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;display:none;}
+.btn-dashboard.visible{display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.btn-dashboard:hover{background:#1a1a1a;transform:translateY(-1px);}
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(20px);background:#000;color:#fff;padding:.7rem 1.4rem;border-radius:999px;font-size:.82rem;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:480px){.options-grid{grid-template-columns:1fr}.nav-buttons{padding:1rem}.progress-bar-wrap{display:none}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+        <path d="M4 10L8.5 14.5L16 6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    LifeOS
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>Configurando seu sistema</span>
+      <span id="pct-label">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+  <div class="step-count" id="step-count">1 / —</div>
+</header>
+
+<main class="main">
+  <div id="question-container"></div>
+</main>
+
+<div class="nav-buttons" id="nav-buttons">
+  <button class="btn-back" id="btn-back" onclick="goBack()" disabled>← Voltar</button>
+  <div class="save-indicator" id="save-indicator">✓ Salvo</div>
+  <button class="skip-btn" id="btn-skip" onclick="skipQuestion()" style="display:none">Pular</button>
+  <button class="btn-next" id="btn-next" onclick="goNext()">
+    <span id="next-label">Continuar</span> →
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const FIREBASE_CONFIG = {
+  apiKey:            'AIzaSyDVLxErQoU3lxN4knk7CjFIGDoD50v4w64',
+  authDomain:        'lifeos-cc13f.firebaseapp.com',
+  projectId:         'lifeos-cc13f',
+  storageBucket:     'lifeos-cc13f.firebasestorage.app',
+  messagingSenderId: '788875605190',
+  appId:             '1:788875605190:web:3da53a87be9b8cd706d3c7',
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+</script>
+
+<script>
+'use strict';
+
+(async () => {
+  if (window.resolveLifeOSApi) {
+    try { API = await window.resolveLifeOSApi(); } catch(e) {}
+  }
+})();
+
+let API = (typeof CONFIG !== 'undefined' ? CONFIG.API_URL : null) || 'http://127.0.0.1:5000';
+
+// ── State ─────────────────────────────────────────────────────
+let currentIndex    = 0;
+let answers         = {};
+let authToken       = '';
+let currentUser     = null;
+let dynamicFlow     = [];   // questions fetched from backend in order
+let totalExpected   = 10;   // estimate for progress bar
+let _initialized    = false;
+
+// ── Persistence ───────────────────────────────────────────────
+const STORAGE_KEY = 'lifeos_onboarding_v5';
+
+function saveLocal() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentIndex, answers, dynamicFlow }));
+  } catch(e) {}
+  _showSaved();
+  _saveRemote();
+}
+
+function loadLocal() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (d && typeof d.currentIndex === 'number' && d.dynamicFlow?.length > 0) {
+      currentIndex = d.currentIndex;
+      answers      = d.answers      || {};
+      dynamicFlow  = d.dynamicFlow  || [];
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+function clearLocal() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+async function _saveRemote() {
+  if (!authToken) return;
+  try {
+    await _apiPost('/onboarding/progress', {
+      current_index:    currentIndex,
+      profession_type:  _getProfessionType(),
+      answers_snapshot: answers,
+      flow_snapshot:    dynamicFlow,
+    });
+  } catch(e) {}
+}
+
+async function _loadRemote() {
+  if (!authToken) return false;
+  try {
+    const res  = await _apiGet('/onboarding/progress');
+    const data = res?.data || {};
+    // FIX: flow is stored inside answers_snapshot.flow_snapshot
+    const snap = data.answers_snapshot || {};
+    const flow = snap.flow_snapshot || [];
+    if (data.current_index > 0 && flow.length > 0) {
+      currentIndex = data.current_index;
+      answers      = snap.answers || {};
+      dynamicFlow  = flow;
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+function _getProfessionType() {
+  // Find the latest profession_type from the dynamic flow progress
+  for (let i = dynamicFlow.length - 1; i >= 0; i--) {
+    if (dynamicFlow[i]?.profession_type) return dynamicFlow[i].profession_type;
+  }
+  return 'gen';
+}
+
+function _showSaved() {
+  const el = document.getElementById('save-indicator');
+  if (!el) return;
+  el.classList.add('visible');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('visible'), 2000);
+}
+
+// ── API helpers ───────────────────────────────────────────────
+async function _apiGet(endpoint) {
+  const res = await fetch(API + '/api' + endpoint, {
+    headers: { 'Authorization': 'Bearer ' + authToken },
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+async function _apiPost(endpoint, body) {
+  const res = await fetch(API + '/api' + endpoint, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+    body:    JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+// ── Firebase auth guard ───────────────────────────────────────
+auth.onAuthStateChanged(user => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  if (_initialized) return;
+  _initialized = true;
+  currentUser  = user;
+
+  user.getIdToken(true).then(async token => {
+    authToken = token;
+    // Auto-renew token every 55 min
+    setInterval(() => user.getIdToken(true).then(t => { authToken = t; }), 55 * 60 * 1000);
+
+    // Check if backend is reachable
+    try {
+      const health = await fetch(API + '/health');
+      if (!health.ok) throw new Error('Backend not OK');
+    } catch(e) {
+      _showOfflineError();
+      return;
+    }
+
+    // Check if onboarding is already done
+    try {
+      const userRes = await _apiGet('/user');
+      if (userRes?.data?.onboarding_done) {
+        window.location.href = 'index.html';
+        return;
+      }
+    } catch(e) {
+      // 401 = user not in DB yet, proceed with onboarding
+      if (!String(e.message).includes('401')) {
+        _showOfflineError();
+        return;
+      }
+    }
+
+    // Restore progress: remote first, then local
+    const fromRemote = await _loadRemote();
+    if (!fromRemote) loadLocal();
+
+    // Initialize flow
+    try {
+      if (dynamicFlow.length === 0 || currentIndex >= dynamicFlow.length) {
+        // Fetch the first question from backend
+        const res = await _apiGet('/onboarding/start');
+        if (res?.data?.question) {
+          dynamicFlow  = [res.data.question];
+          currentIndex = 0;
+        } else if (res?.data?.is_complete) {
+          window.location.href = 'index.html';
+          return;
+        } else {
+          _showOfflineError();
+          return;
+        }
+      } else {
+        // Validate restored index
+        if (currentIndex >= dynamicFlow.length) currentIndex = dynamicFlow.length - 1;
+      }
+      renderQuestion(currentIndex);
+    } catch(e) {
+      _showOfflineError();
+    }
+  }).catch(() => { window.location.href = 'login.html'; });
+});
+
+// ── Backend offline screen ────────────────────────────────────
+function _showOfflineError() {
+  document.getElementById('nav-buttons').style.display = 'none';
+  document.getElementById('question-container').innerHTML = `
+    <div style="max-width:460px;text-align:center;padding:2rem">
+      <div style="font-size:3rem;margin-bottom:1.5rem">⚠️</div>
+      <h2 style="font-size:1.5rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.75rem">
+        Servidor indisponível
+      </h2>
+      <p style="font-size:.88rem;color:var(--t2);line-height:1.7;margin-bottom:2rem">
+        O onboarding precisa do backend para gerar perguntas personalizadas.<br><br>
+        Verifique se o Flask está rodando em<br>
+        <code style="background:#f5f5f5;padding:.2rem .6rem;border-radius:6px;font-size:.82rem">${API}</code>
+      </p>
+      <button onclick="window.location.reload()"
+        style="width:100%;height:48px;border:none;border-radius:10px;background:#000;color:#fff;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;margin-bottom:.75rem">
+        🔄 Tentar novamente
+      </button>
+      <button onclick="firebase.auth().signOut().then(()=>{localStorage.clear();window.location.href='login.html'})"
+        style="background:none;border:none;font-family:inherit;font-size:.82rem;color:var(--t3);cursor:pointer;text-decoration:underline">
+        Sair e voltar ao login
+      </button>
+    </div>`;
+}
+
+// ── Render question ───────────────────────────────────────────
+function renderQuestion(index) {
+  const q = dynamicFlow[index];
+  if (!q) { showFinishScreen(); return; }
+
+  // Progress bar
+  const pct = Math.round((index / Math.max(totalExpected, index + 1)) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('pct-label').textContent     = pct + '%';
+  document.getElementById('step-count').textContent    = (index + 1) + ' / ~' + Math.max(totalExpected, index + 1);
+
+  // Back button
+  document.getElementById('btn-back').disabled = index === 0;
+
+  // Skip button
+  document.getElementById('btn-skip').style.display = q.required === false ? 'inline' : 'none';
+
+  // Build input HTML
+  let inputHtml = '';
+  if (q.type === 'text') {
+    const saved = answers[q.id] || '';
+    inputHtml = `<input type="text" class="form-input" id="q-input" placeholder="${esc(q.placeholder || '')}" value="${esc(saved)}" onkeydown="if(event.key==='Enter')goNext()"/>`;
+  } else if (q.type === 'textarea') {
+    const saved = answers[q.id] || '';
+    inputHtml = `<textarea class="form-input" id="q-input" placeholder="${esc(q.placeholder || '')}" rows="4">${esc(saved)}</textarea>`;
+  } else if (q.type === 'choice') {
+    const saved = answers[q.id] || '';
+    inputHtml = '<div class="options-grid">' +
+      (q.options || []).map(opt =>
+        `<button class="opt-btn ${saved === opt.value ? 'selected' : ''}" onclick="selectChoice('${esc(opt.value)}', this)">
+          <span class="opt-icon">${opt.label.split(' ')[0]}</span>
+          ${opt.label.split(' ').slice(1).join(' ')}
+          ${opt.desc ? `<span class="opt-label">${esc(opt.desc)}</span>` : ''}
+        </button>`
+      ).join('') + '</div>';
+  } else if (q.type === 'dual-slider') {
+    const sv = answers[q.id] || { energy: 6, stress: 4 };
+    inputHtml = buildDualSlider(sv);
+  }
+
+  const cont = document.getElementById('question-container');
+  cont.innerHTML =
+    '<div class="question-screen" id="q-screen">' +
+    `<div class="block-tag">${q.blockIcon || '⚙️'} ${q.blockName || 'Configuração'}</div>` +
+    `<p class="q-number">Pergunta ${index + 1}</p>` +
+    `<h2 class="q-title">${q.text || q.title || ''}</h2>` +
+    (q.hint ? `<p class="q-hint">${q.hint}</p>` : '') +
+    inputHtml +
+    '</div>';
+
+  setTimeout(() => {
+    const el = document.getElementById('q-input');
+    if (el) el.focus();
+  }, 300);
+}
+
+function buildDualSlider(sv) {
+  const dots = (n, label, low, high) =>
+    `<p style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t2);margin-bottom:.5rem">${label}</p>
+    <div class="slider-labels"><span>${low}</span><span>${high}</span></div>
+    <div class="slider-dots" id="${n}-dots">` +
+    [1,2,3,4,5,6,7,8,9,10].map(i =>
+      `<div class="s-dot ${sv[n]===i?'active':''}" onclick="selectDot('${n}',${i})">${i}</div>`
+    ).join('') + '</div>';
+
+  return `<div style="margin-bottom:1.5rem">${dots('energy','⚡ Nível de Energia','Péssimo','Excelente')}</div>
+          <div>${dots('stress','🧠 Nível de Estresse','Sem estresse','Máximo')}</div>`;
+}
+
+// ── Interactions ──────────────────────────────────────────────
+function selectChoice(value, el) {
+  document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[dynamicFlow[currentIndex].id] = value;
+}
+
+function selectDot(type, value) {
+  document.querySelectorAll(`#${type}-dots .s-dot`).forEach((d, i) => {
+    d.classList.toggle('active', i + 1 === value);
+  });
+  const q = dynamicFlow[currentIndex];
+  answers[q.id] = Object.assign({}, answers[q.id] || {}, { [type]: value });
+}
+
+// ── Navigation — asks backend for next question ───────────────
+async function goNext() {
+  const q     = dynamicFlow[currentIndex];
+  const value = getInputValue(q);
+
+  if (q.required !== false && !value) {
+    showToast('Preencha este campo antes de continuar.');
+    return;
+  }
+  if (value !== undefined && value !== '') answers[q.id] = value;
+
+  const btn = document.getElementById('btn-next');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
+
+  try {
+    const res = await _apiPost('/onboarding/answer', {
+      question_id:   q.id,
+      answer:        typeof value === 'object' ? JSON.stringify(value) : String(value || ''),
+      current_index: currentIndex,
+    });
+    const payload = res.data || res;
+
+    btn.disabled = false;
+    btn.innerHTML = '<span id="next-label">Continuar</span> →';
+
+    if (payload.is_complete || payload.done) {
+      showFinishScreen();
+      return;
+    }
+
+    if (payload.question) {
+      const nq      = payload.question;
+      // Use the backend's authoritative index
+      const nextIdx = (typeof nq.index === 'number') ? nq.index : (currentIndex + 1);
+
+      // Extend flow array to cover this index
+      while (dynamicFlow.length <= nextIdx) dynamicFlow.push(null);
+      dynamicFlow[nextIdx] = nq;
+
+      // Update total expected for progress bar
+      if (nextIdx >= totalExpected) totalExpected = nextIdx + 2;
+
+      await _animateOut();
+      currentIndex = nextIdx;
+      saveLocal();
+      renderQuestion(currentIndex);
+      return;
+    }
+
+    // No next question returned and is_complete not set → finish
+    showFinishScreen();
+
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = '<span id="next-label">Continuar</span> →';
+    showToast('Erro de conexão. Verifique o servidor e tente novamente.');
+    console.error('[LifeOS] onboarding answer failed:', e.message);
+  }
+}
+
+async function goBack() {
+  if (currentIndex === 0) return;
+  await _animateOut();
+  currentIndex--;
+  saveLocal();
+  renderQuestion(currentIndex);
+}
+
+function skipQuestion() {
+  const q = dynamicFlow[currentIndex];
+  if (q) answers[q.id] = null;
+  goNext();
+}
+
+async function _animateOut() {
+  const screen = document.getElementById('q-screen');
+  if (screen) { screen.classList.add('exit'); await sleep(220); }
+}
+
+// ── Read current input value ──────────────────────────────────
+function getInputValue(q) {
+  if (q.type === 'text' || q.type === 'textarea') {
+    const el = document.getElementById('q-input');
+    return el ? el.value.trim() : '';
+  }
+  if (q.type === 'choice' || q.type === 'dual-slider') return answers[q.id] || '';
+  return '';
+}
+
+// ── Finish screen ─────────────────────────────────────────────
+async function showFinishScreen() {
+  document.getElementById('nav-buttons').style.display = 'none';
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('pct-label').textContent     = '100%';
+
+  const GEN_LABELS = [
+    'Criando perfil e metas',
+    'Configurando finanças',
+    'Montando rotina e hábitos',
+    'Calculando plano de saúde',
+    'Gerando plano semanal com IA',
+  ];
+
+  document.getElementById('question-container').innerHTML = `
+    <div class="finish-screen">
+      <div class="finish-icon">⚡</div>
+      <h2 class="finish-title">Sistema <span>configurado.</span></h2>
+      <p class="finish-sub">Processando suas respostas e montando seu dashboard personalizado.</p>
+      <div class="finish-generating">
+        ${GEN_LABELS.map((label, i) =>
+          `<div class="gen-item"><div class="gen-dot loading" id="gen${i+1}"></div><span>${label}</span></div>`
+        ).join('')}
+      </div>
+      <button class="btn-dashboard" id="btn-dashboard" onclick="this.onclick=null; goToDashboard()">
+        Abrir meu Dashboard →
+      </button>
+    </div>`;
+
+  // Animate generation steps
+  for (let i = 0; i < 5; i++) {
+    await sleep(700 + i * 350);
+    const dot = document.getElementById('gen' + (i + 1));
+    if (dot) { dot.classList.remove('loading'); dot.classList.add('done'); }
+  }
+
+  // Call backend finalize + first-login-data (non-blocking)
+  try { await _apiPost('/onboarding/finalize', { answers }); } catch(e) {}
+  try { await _apiPost('/first-login-data', {}); } catch(e) {}
+
+  clearLocal();
+  await sleep(300);
+  const btn = document.getElementById('btn-dashboard');
+  if (btn) btn.classList.add('visible');
+}
+
+async function goToDashboard() {
+  const btn = document.getElementById('btn-dashboard');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Preparando dashboard…'; }
+
+  // Aguarda o banco confirmar onboarding_done = true antes de redirecionar.
+  // Isso elimina a race condition onde o index.html carrega antes do banco
+  // propagar o campo e redireciona de volta ao login.
+  const token = localStorage.getItem('lifeos_token') || '';
+  let confirmed = false;
+
+  for (let i = 0; i < 12; i++) {
+    await sleep(800);
+    try {
+      const res = await fetch(API + '/api/user', {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'X-Timezone': (typeof LOCALE !== 'undefined' ? LOCALE.timezone : 'America/Sao_Paulo'),
+          'X-Language':  (typeof LOCALE !== 'undefined' ? LOCALE.lang : 'pt-BR'),
+          'X-Currency':  (typeof LOCALE !== 'undefined' ? LOCALE.currency : 'BRL'),
+        }
+      });
+      if (res.ok) {
+        const body = await res.json();
+        const u = body.data || body;
+        if (u.onboarding_done) {
+          confirmed = true;
+          break;
+        }
+      }
+    } catch(e) { /* ignora erros de rede e tenta novamente */ }
+
+    if (btn && i > 3) btn.textContent = '⏳ Sincronizando dados…';
+  }
+
+  // Seta a flag como backup (caso o polling tenha falhado por rede)
+  sessionStorage.setItem('lifeos_just_completed_onboarding', '1');
+
+  if (btn) btn.textContent = '✅ Abrindo dashboard…';
+  await sleep(300);
+  window.location.replace('index.html');
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+</script>
+</body>
+</html>

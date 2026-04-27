@@ -1,0 +1,71 @@
+/* Tokens alinhados ao index.html principal (preto / branco / roxo) */
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --t2: #555555;
+  --t3: #999999;
+  --accent: #a855f7;
+  --border: #e8e8e8;
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.los-shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+.los-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.5rem;
+}
+.los-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: #fafafa;
+}
+.los-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.35rem;
+}
+.los-muted {
+  font-size: 0.85rem;
+  color: var(--t2);
+  line-height: 1.55;
+}
+.los-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 1.25rem;
+  border-radius: 10px;
+  border: none;
+  background: #000;
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+.los-btn:hover {
+  opacity: 0.88;
+}
+.los-err {
+  color: #b91c1c;
+  font-size: 0.85rem;
+}
