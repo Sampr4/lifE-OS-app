@@ -13,7 +13,7 @@ const LifeOSAPI = {
   // ─── Internal fetch ──────────────────────────────────────
   async _fetch(endpoint, options = {}) {
     const token = window.__LIFEOS_TOKEN__ || localStorage.getItem('lifeos_token') || '';
-    const url   = `${((typeof CONFIG !== 'undefined' && CONFIG.API_URL) ? CONFIG.API_URL : 'http://127.0.0.1:5000')}/api${endpoint}`;
+    const url   = `${((typeof CONFIG !== 'undefined' && CONFIG.API_URL) ? CONFIG.API_URL : 'https://life-os-app-wg4o.onrender.com')}/api${endpoint}`;
     const ctrl  = new AbortController();
     const tid   = setTimeout(() => ctrl.abort(), CONFIG.REQUEST_TIMEOUT);
 
@@ -57,7 +57,7 @@ const LifeOSAPI = {
   // ─── Backend health check ─────────────────────────────────
   async checkHealth() {
     try {
-      const res = await fetch(`${((typeof CONFIG !== 'undefined' && CONFIG.API_URL) ? CONFIG.API_URL : 'http://127.0.0.1:5000')}/health`, { method: 'GET', cache: 'no-store' });
+      const res = await fetch(`${((typeof CONFIG !== 'undefined' && CONFIG.API_URL) ? CONFIG.API_URL : 'https://life-os-app-wg4o.onrender.com')}/health`, { method: 'GET', cache: 'no-store' });
       return res.ok;
     } catch {
       return false;
