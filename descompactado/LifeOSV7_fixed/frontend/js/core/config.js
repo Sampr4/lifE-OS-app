@@ -3,13 +3,16 @@
 ═══════════════════════════════════════════════════ */
 
 (function(){
+  const RENDER_URL = 'https://life-os-app-wg4o.onrender.com';
+
   const stored = (() => {
-    try { return localStorage.getItem('lifeos_api_url') || ''; } catch(e) { return ''; }
+    try { return localStorage.getItem('lifeos_api_url') || ''; } catch(e) { return ''; }\
   })();
 
   const host = (location && location.hostname) ? location.hostname : '127.0.0.1';
   const candidates = [
     stored,
+    RENDER_URL,
     `http://${host}:5000`,
     'http://127.0.0.1:5000',
     'http://localhost:5000'
@@ -18,7 +21,7 @@
   window.__LIFEOS_API_CANDIDATES__ = candidates.slice();
 
   window.CONFIG = {
-    API_URL: stored || `http://${host}:5000`,
+    API_URL: stored || RENDER_URL,
     REQUEST_TIMEOUT: 15000,
     FIREBASE: {
       apiKey:            'AIzaSyDVLxErQoU3lxN4knk7CjFIGDoD50v4w64',
@@ -61,7 +64,7 @@
       } catch(e) {}
     }
 
-    const fallback = list[0] || `http://${host}:5000`;
+    const fallback = list[0] || RENDER_URL;
     CONFIG.API_URL = fallback;
     return fallback;
   };
