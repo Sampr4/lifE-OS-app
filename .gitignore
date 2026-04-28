@@ -54,3 +54,5 @@ temp/
 
 # ZIPs
 *.zip
+serviceAccountKey.json
+.env
