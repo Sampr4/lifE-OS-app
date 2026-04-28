@@ -5,172 +5,337 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LifeOS — Entrar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <style>
-:root{
-  --bg:#08050d;--panel:rgba(17,12,27,.72);--panel2:rgba(255,255,255,.08);--text:#fff;--t2:#d8cfe6;--t3:#9789a8;
-  --accent:#a855f7;--acc2:#7c3aed;--acc3:#d946ef;--border:rgba(255,255,255,.12);--line:rgba(216,180,254,.16);
-  --shadow:0 34px 120px rgba(0,0,0,.62);--font:'DM Sans',system-ui,sans-serif;--display:'Bricolage Grotesque','DM Sans',system-ui,sans-serif;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html,body{min-height:100%}
-body{
-  font-family:var(--font);color:var(--text);min-height:100vh;overflow-x:hidden;display:flex;align-items:center;justify-content:center;
-  background:
-    radial-gradient(circle at 16% 12%, rgba(168,85,247,.34), transparent 28%),
-    radial-gradient(circle at 84% 8%, rgba(217,70,239,.20), transparent 30%),
-    radial-gradient(circle at 54% 110%, rgba(124,58,237,.22), transparent 36%),
-    linear-gradient(135deg,#07040b,#0e0718 48%,#050308);
-}
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;opacity:.42;
-  background:linear-gradient(rgba(216,180,254,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(216,180,254,.055) 1px,transparent 1px);
-  background-size:58px 58px;mask-image:linear-gradient(to bottom,black,transparent 78%);
-}
-body::after{
-  content:'';position:fixed;inset:-40%;pointer-events:none;opacity:.10;mix-blend-mode:screen;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation:grain 8s steps(6) infinite;
-}
-@keyframes grain{0%,100%{transform:translate(0)}25%{transform:translate(-4%,2%)}50%{transform:translate(3%,-4%)}75%{transform:translate(-2%,5%)}}
-.shell{position:relative;z-index:1;width:min(1120px,calc(100% - 28px));display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:stretch}
-.brand-panel,.card{
-  position:relative;overflow:hidden;border:1px solid var(--border);border-radius:34px;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.045));
-  box-shadow:var(--shadow);backdrop-filter:blur(26px) saturate(1.35);-webkit-backdrop-filter:blur(26px) saturate(1.35);
-}
-.brand-panel{min-height:620px;padding:38px;display:flex;flex-direction:column;justify-content:space-between}
-.brand-panel::before,.card::before{
-  content:'';position:absolute;inset:1px;border-radius:33px;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.18),transparent 40%,rgba(168,85,247,.10));
-}
-.brand-panel::after{
-  content:'';position:absolute;width:440px;height:440px;border-radius:50%;right:-150px;bottom:-160px;background:radial-gradient(circle,rgba(168,85,247,.44),rgba(168,85,247,.12) 44%,transparent 72%);filter:blur(8px);
-}
-.logo{position:relative;z-index:2;display:flex;align-items:center;gap:.7rem;font-weight:800;letter-spacing:-.05em;font-size:1.15rem}
-.logo-icon,.load-icon{
-  width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,#a855f7 52%,#d946ef);display:flex;align-items:center;justify-content:center;
-  box-shadow:0 18px 42px rgba(168,85,247,.42);
-}
-.hero{position:relative;z-index:2;max-width:560px}
-.kicker{display:inline-flex;align-items:center;gap:.45rem;border:1px solid var(--line);background:rgba(168,85,247,.12);color:#e9d5ff;border-radius:999px;padding:.46rem .75rem;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-bottom:1.1rem}
-h1{font-family:var(--display);font-size:clamp(2.8rem,6vw,5.4rem);line-height:.88;letter-spacing:-.085em;margin-bottom:1.2rem}
-h1 span,.headline span{background:linear-gradient(90deg,#d8b4fe,#a855f7,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{font-size:1rem;line-height:1.75;color:var(--t2);max-width:520px}
-.orbits{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.orbit-card{border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.055);padding:16px;min-height:112px}
-.orbit-card strong{display:block;font-size:1.4rem;margin-bottom:.2rem}.orbit-card span{font-size:.74rem;color:var(--t3);line-height:1.45;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
-.card{padding:38px;display:flex;flex-direction:column;justify-content:center;min-height:620px}
-.card > *{position:relative;z-index:2}.mobile-logo{display:none}.headline{font-family:var(--display);font-size:2rem;line-height:1.05;letter-spacing:-.065em;margin-bottom:.65rem}
-.sub{font-size:.9rem;color:var(--t2);line-height:1.65;margin-bottom:1.7rem}.provider-tag{font-size:.68rem;color:#d8b4fe;font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.65rem}
-.btn-google,.btn-primary,.form-input{
-  width:100%;height:52px;border-radius:16px;font-family:var(--font);font-size:.92rem;transition:transform .2s cubic-bezier(.34,1.56,.64,1),border-color .2s,background .2s,box-shadow .2s;
-}
-.btn-google{display:flex;align-items:center;justify-content:center;gap:.55rem;border:1px solid var(--border);background:rgba(255,255,255,.92);color:#10091a;font-weight:800;cursor:pointer;margin-bottom:.6rem}
-.btn-google:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(0,0,0,.25)}
-.divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0}.divider::before,.divider::after{content:'';height:1px;flex:1;background:var(--border)}.divider span{font-size:.68rem;color:var(--t3);font-weight:800;text-transform:uppercase;letter-spacing:.12em}
-.form-input{padding:0 1rem;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);outline:none;margin-bottom:10px}
-.form-input::placeholder{color:rgba(216,207,230,.52)}.form-input:focus{border-color:rgba(168,85,247,.72);background:rgba(255,255,255,.09);box-shadow:0 0 0 4px rgba(168,85,247,.13)}
-.btn-primary{border:0;background:linear-gradient(135deg,#7c3aed,#a855f7 52%,#d946ef);color:#fff;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;box-shadow:0 18px 46px rgba(168,85,247,.34)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 24px 58px rgba(168,85,247,.44)}.btn-primary:disabled,.btn-google:disabled{opacity:.55;cursor:not-allowed;transform:none}
-.toggle-mode{text-align:center;margin-top:1rem;font-size:.86rem;color:var(--t3)}.toggle-mode button{background:none;border:none;color:#e9d5ff;font-weight:900;cursor:pointer;font-family:var(--font);font-size:.86rem}
-.register-fields{display:none}.register-fields.visible{display:block}.btn-spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}@keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:#fff;color:#13091d;padding:.8rem 1.35rem;border-radius:999px;font-size:.84rem;font-weight:800;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap;box-shadow:0 18px 60px rgba(0,0,0,.28)}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.redirect-overlay{position:fixed;inset:0;background:#08050d;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:1rem}.redirect-overlay.active{display:flex}.load-logo{display:flex;align-items:center;gap:.7rem;font-weight:900;font-size:1.15rem;letter-spacing:-.05em}.load-spinner{width:30px;height:30px;border:3px solid rgba(168,85,247,.22);border-top-color:#d8b4fe;border-radius:50%;animation:spin .7s linear infinite}.redirect-msg{font-size:.78rem;color:var(--t3);font-weight:700}
-@media(max-width:860px){.shell{grid-template-columns:1fr;width:min(480px,calc(100% - 24px));padding:18px 0}.brand-panel{display:none}.card{min-height:auto;padding:28px;border-radius:28px}.mobile-logo{display:flex;margin-bottom:2rem}.headline{font-size:2rem}.toast{max-width:92vw;text-align:center;white-space:normal}}
+:root{--bg:#fff;--text:#000;--t2:#555;--t3:#999;--accent:#a855f7;--acc-bg:rgba(168,85,247,.07);--border:#e8e8e8;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;align-items:center;justify-content:center;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(168,85,247,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+.blob{position:fixed;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.08) 0%,transparent 70%);pointer-events:none;z-index:0;animation:blobMove 12s ease-in-out infinite alternate;}
+.blob-1{top:-100px;right:-100px}.blob-2{bottom:-100px;left:-100px;animation-delay:-6s}
+@keyframes blobMove{from{transform:scale(1)}to{transform:scale(1.15) translate(20px,20px)}}
+.redirect-overlay{position:fixed;inset:0;background:#fff;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:1rem;}
+.redirect-overlay.active{display:flex}
+.load-logo{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:1.1rem;letter-spacing:-.04em}
+.load-icon{width:30px;height:30px;border-radius:8px;background:#000;display:flex;align-items:center;justify-content:center}
+.load-spinner{width:28px;height:28px;border:3px solid rgba(168,85,247,.2);border-top-color:#a855f7;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.redirect-msg{font-size:.75rem;color:#999;font-weight:500}
+.card{position:relative;z-index:1;width:100%;max-width:420px;padding:2.5rem;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);animation:cardIn .5s cubic-bezier(.16,1,.3,1) both;margin:1.5rem;}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
+.logo{display:flex;align-items:center;gap:.6rem;margin-bottom:2rem;}
+.logo-icon{width:32px;height:32px;border-radius:8px;background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-name{font-size:1.05rem;font-weight:800;letter-spacing:-.04em}
+.headline{font-size:1.6rem;font-weight:800;letter-spacing:-.04em;line-height:1.2;margin-bottom:.4rem;}
+.headline span{color:var(--accent)}
+.sub{font-size:.82rem;color:var(--t2);line-height:1.5;margin-bottom:1.75rem;}
+.provider-tag{font-size:.65rem;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;height:50px;border:1.5px solid #dadce0;border-radius:10px;background:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;margin-bottom:.5rem;}
+.btn-google:hover{border-color:#000;background:#fafafa;transform:translateY(-1px);box-shadow:0 3px 12px rgba(0,0,0,.07)}
+.btn-google:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);white-space:nowrap}
+.form-input{width:100%;height:46px;padding:0 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:#fff;outline:none;transition:border-color .2s;margin-bottom:10px;}
+.form-input:focus{border-color:var(--accent)}
+.btn-primary{width:100%;height:48px;border:none;border-radius:10px;background:#000;color:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.btn-primary:hover{background:#1a1a1a;transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.toggle-mode{text-align:center;margin-top:1rem;font-size:.82rem;color:var(--t3);}
+.toggle-mode button{background:none;border:none;color:var(--accent);font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.82rem;}
+.register-fields{display:none}
+.register-fields.visible{display:block}
+.btn-spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:#000;color:#fff;padding:.7rem 1.4rem;border-radius:999px;font-size:.82rem;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
+
+<!-- Redirect overlay — only shows AFTER successful login -->
 <div class="redirect-overlay" id="redirect-overlay">
   <div class="load-logo">
-    <div class="load-icon"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M4 10L8.5 14.5L16 6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="load-icon">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+        <path d="M4 10L8.5 14.5L16 6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
     LifeOS
   </div>
   <div class="load-spinner"></div>
   <p class="redirect-msg" id="redirect-msg">Verificando conta…</p>
 </div>
 
-<div class="shell">
-  <aside class="brand-panel">
-    <div class="logo">
-      <div class="logo-icon"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 10L8.5 14.5L16 6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      LifeOS
-    </div>
-    <section class="hero">
-      <div class="kicker">Centro de comando pessoal</div>
-      <h1>Organize sua vida com um sistema <span>inteligente.</span></h1>
-      <p>Login visual no mesmo nível da plataforma: escuro, vivo, premium e pronto para receber a autenticação real sem quebrar os eventos existentes.</p>
-    </section>
-    <div class="orbits">
-      <div class="orbit-card"><strong>01</strong><span>Onboarding guiado</span></div>
-      <div class="orbit-card"><strong>02</strong><span>Dashboard adaptativo</span></div>
-      <div class="orbit-card"><strong>03</strong><span>Rotina com IA</span></div>
-    </div>
-  </aside>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
 
-  <main class="card" id="login-card">
-    <div class="logo mobile-logo">
-      <div class="logo-icon"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 10L8.5 14.5L16 6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      LifeOS
-    </div>
-
-    <h2 class="headline" id="headline">Entre no seu<br><span>sistema LifeOS.</span></h2>
-    <p class="sub" id="sub-text">A estrutura foi preservada. A tela está pronta para reconectar Google, e-mail e redirecionamentos quando o backend voltar.</p>
-
-    <p class="provider-tag">Continuar com</p>
-    <button class="btn-google" id="btn-google" onclick="loginGoogle()">
-      <svg width="18" height="18" viewBox="0 0 24 24">
-        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+<!-- Login card — always visible on page load -->
+<div class="card" id="login-card">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <path d="M4 10L8.5 14.5L16 6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      Continuar com Google
-    </button>
-
-    <div class="divider"><span>ou e-mail</span></div>
-
-    <div class="register-fields" id="register-fields">
-      <input type="text" class="form-input" id="input-name" placeholder="Seu nome completo"/>
     </div>
-    <input type="email" class="form-input" id="input-email" placeholder="voce@email.com"/>
-    <input type="password" class="form-input" id="input-password" placeholder="Senha (mín. 6 caracteres)" onkeydown="if(event.key==='Enter') submitEmail()"/>
+    <span class="logo-name">LifeOS</span>
+  </div>
 
-    <button class="btn-primary" id="btn-submit" onclick="submitEmail()">
-      <span id="btn-label">Entrar</span>
-      <div class="btn-spinner" id="btn-spinner"></div>
-    </button>
+  <h1 class="headline" id="headline">Seu sistema de<br><span>vida inteligente.</span></h1>
+  <p class="sub" id="sub-text">Entre para acessar seu dashboard personalizado com IA.</p>
 
-    <div class="toggle-mode">
-      <span id="toggle-text">Não tem conta?</span>
-      <button onclick="toggleMode()" id="toggle-btn">Criar conta grátis</button>
-    </div>
-  </main>
+  <p class="provider-tag">Continuar com</p>
+
+  <button class="btn-google" id="btn-google" onclick="loginGoogle()">
+    <svg width="18" height="18" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+    </svg>
+    Continuar com Google
+  </button>
+
+  <div class="divider"><span>ou e-mail</span></div>
+
+  <div class="register-fields" id="register-fields">
+    <input type="text" class="form-input" id="input-name" placeholder="Seu nome completo"/>
+  </div>
+  <input type="email"    class="form-input" id="input-email"    placeholder="voce@email.com"/>
+  <input type="password" class="form-input" id="input-password" placeholder="Senha (mín. 6 caracteres)"
+    onkeydown="if(event.key==='Enter') submitEmail()"/>
+
+  <button class="btn-primary" id="btn-submit" onclick="submitEmail()">
+    <span id="btn-label">Entrar</span>
+    <div class="btn-spinner" id="btn-spinner"></div>
+  </button>
+
+  <div class="toggle-mode">
+    <span id="toggle-text">Não tem conta?</span>
+    <button onclick="toggleMode()" id="toggle-btn">Criar conta grátis</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
 'use strict';
+
+const FIREBASE_CONFIG = {
+  apiKey:            'AIzaSyDVLxErQoU3lxN4knk7CjFIGDoD50v4w64',
+  authDomain:        'lifeos-cc13f.firebaseapp.com',
+  projectId:         'lifeos-cc13f',
+  storageBucket:     'lifeos-cc13f.firebasestorage.app',
+  messagingSenderId: '788875605190',
+  appId:             '1:788875605190:web:3da53a87be9b8cd706d3c7',
+};
+
+const API = null;
+
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
 let isRegisterMode = false;
-function showToast(msg){
-  const t=document.getElementById('toast');
-  if(!t) return;
-  t.textContent=msg||'Aguardando conexão';
+let _loginInFlight = false;
+const LOGIN_PENDING_KEY = 'lifeos_login_pending';
+
+function _markLoginPending() {
+  try { sessionStorage.setItem(LOGIN_PENDING_KEY, '1'); } catch(e) {}
+}
+function _clearLoginPending() {
+  try { sessionStorage.removeItem(LOGIN_PENDING_KEY); } catch(e) {}
+}
+function _isLoginPending() {
+  try { return sessionStorage.getItem(LOGIN_PENDING_KEY) === '1'; } catch(e) { return false; }
+}
+
+async function _resolveApiBase() {
+  if (window.resolveLifeOSApi) {
+    try { return await window.resolveLifeOSApi(); } catch(e) {}
+  }
+  const saved = localStorage.getItem('lifeos_api_url');
+  const candidates = [
+    saved,
+    (typeof CONFIG !== 'undefined' && CONFIG.API_URL) ? CONFIG.API_URL : null,
+    `${window.location.protocol}//${window.location.hostname}:5000`,
+    'https://life-os-app-wg4o.onrender.com',
+    'http://localhost:5000' /* local dev only */,
+  ].filter(Boolean);
+  for (const base of [...new Set(candidates)]) {
+    try {
+      const res = await fetch(`${base}/health`, { cache: 'no-store' });
+      if (res.ok) {
+        try { localStorage.setItem('lifeos_api_url', base); } catch(e) {}
+        return base;
+      }
+    } catch(e) {}
+  }
+  throw new Error('Failed to fetch');
+}
+
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
+auth.getRedirectResult().then(async result => {
+  if (result?.user) {
+    _markLoginPending();
+    await _onLoginSuccess(result.user, { force: true });
+  }
+}).catch(e => console.warn('[LifeOS] Redirect result:', e.code || e.message));
+
+auth.onAuthStateChanged(async user => {
+  if (!user) return;
+  if (!_isLoginPending()) return;
+  await _onLoginSuccess(user, { force: true });
+});
+
+// ── Google login ──────────────────────────────────────────────
+async function loginGoogle() {
+  const btn = document.getElementById('btn-google');
+  btn.disabled = true;
+  _markLoginPending();
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      await auth.signInWithRedirect(provider);
+      return;
+    }
+
+    const result = await auth.signInWithPopup(provider);
+    if (result?.user) {
+      await _onLoginSuccess(result.user, { force: true });
+      return;
+    }
+
+    setTimeout(async () => {
+      const currentUser = auth.currentUser;
+      if (currentUser && _isLoginPending()) {
+        await _onLoginSuccess(currentUser, { force: true });
+      }
+    }, 250);
+  } catch (e) {
+    btn.disabled = false;
+    _clearLoginPending();
+    if (e.code !== 'auth/popup-closed-by-user') showToast(e.message || 'Erro ao entrar com Google.');
+  }
+}
+
+// ── Email login / registration ────────────────────────────────
+async function submitEmail() {
+  const email    = document.getElementById('input-email').value.trim();
+  const password = document.getElementById('input-password').value;
+  const name     = document.getElementById('input-name')?.value?.trim() || '';
+
+  if (!email || !password) { showToast('Preencha e-mail e senha.'); return; }
+  if (isRegisterMode && !name) { showToast('Informe seu nome.'); return; }
+
+  setLoading(true);
+  _markLoginPending();
+  try {
+    let credential;
+    if (isRegisterMode) {
+      credential = await auth.createUserWithEmailAndPassword(email, password);
+      await credential.user.updateProfile({ displayName: name });
+    } else {
+      credential = await auth.signInWithEmailAndPassword(email, password);
+    }
+    await _onLoginSuccess(credential.user, { force: true });
+  } catch (e) {
+    _clearLoginPending();
+    setLoading(false);
+    const msgs = {
+      'auth/user-not-found':     'Usuário não encontrado.',
+      'auth/wrong-password':     'Senha incorreta.',
+      'auth/email-already-in-use':'E-mail já cadastrado.',
+      'auth/weak-password':      'Senha muito fraca (mín. 6 caracteres).',
+      'auth/invalid-email':      'E-mail inválido.',
+      'auth/invalid-credential': 'E-mail ou senha incorretos.',
+    };
+    showToast(msgs[e.code] || e.message || 'Erro de autenticação.');
+  }
+}
+
+// ── Post-login flow ───────────────────────────────────────────
+async function _onLoginSuccess(user, opts = {}) {
+  if (!user) return;
+  if (_loginInFlight && !opts.force) return;
+  _loginInFlight = true;
+  showOverlay('Verificando conta…');
+
+  try {
+    const apiBase = await _resolveApiBase();
+    const token = await user.getIdToken(true);
+
+    const res = await fetch(`${apiBase}/api/auth/register`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ token }),
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.message || `HTTP ${res.status}`);
+    }
+
+    const payload = await res.json().catch(() => ({}));
+    const data = payload?.data || {};
+    localStorage.setItem('lifeos_token', token);
+    window.__LIFEOS_TOKEN__ = token;
+    try { localStorage.setItem('lifeos_api_url', apiBase); } catch(e) {}
+
+    _clearLoginPending();
+    showOverlay(data.onboarding_done ? 'Abrindo dashboard…' : 'Configurando seu sistema…');
+    await sleep(450);
+    window.location.replace(data.onboarding_done ? 'index.html' : 'onboarding.html');
+  } catch (e) {
+    _loginInFlight = false;
+    hideOverlay();
+    document.getElementById('btn-google').disabled = false;
+    setLoading(false);
+    if (e.message === 'Failed to fetch') {
+      showToast('Servidor offline. Verifique se o Flask está rodando.');
+    } else {
+      showToast(e.message || 'Erro ao conectar ao servidor.');
+    }
+  }
+}
+
+// ── UI helpers ────────────────────────────────────────────────
+function toggleMode() {
+  isRegisterMode = !isRegisterMode;
+  document.getElementById('register-fields').classList.toggle('visible', isRegisterMode);
+  document.getElementById('headline').innerHTML     = isRegisterMode ? 'Criar sua<br><span>conta grátis.</span>' : 'Seu sistema de<br><span>vida inteligente.</span>';
+  document.getElementById('sub-text').textContent   = isRegisterMode ? 'Crie sua conta para começar.' : 'Entre para acessar seu dashboard personalizado com IA.';
+  document.getElementById('btn-label').textContent  = isRegisterMode ? 'Criar conta' : 'Entrar';
+  document.getElementById('toggle-text').textContent= isRegisterMode ? 'Já tem conta?' : 'Não tem conta?';
+  document.getElementById('toggle-btn').textContent = isRegisterMode ? 'Fazer login' : 'Criar conta grátis';
+}
+
+function setLoading(on) {
+  document.getElementById('btn-submit').disabled = on;
+  document.getElementById('btn-spinner').style.display = on ? 'block' : 'none';
+  document.getElementById('btn-label').style.display   = on ? 'none'  : 'inline';
+}
+
+function showOverlay(msg) {
+  document.getElementById('redirect-msg').textContent = msg;
+  document.getElementById('redirect-overlay').classList.add('active');
+}
+
+function hideOverlay() {
+  document.getElementById('redirect-overlay').classList.remove('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._t);
-  t._t=setTimeout(()=>t.classList.remove('show'),2400);
+  t._t = setTimeout(() => t.classList.remove('show'), 3500);
 }
-function loginGoogle(){ showToast('Login desativado no shell visual.'); }
-function submitEmail(){ showToast('Autenticação aguardando reconexão.'); }
-function toggleMode(){
-  isRegisterMode=!isRegisterMode;
-  document.getElementById('register-fields')?.classList.toggle('visible', isRegisterMode);
-  document.getElementById('btn-label').textContent = isRegisterMode ? 'Criar conta' : 'Entrar';
-  document.getElementById('toggle-text').textContent = isRegisterMode ? 'Já tem conta?' : 'Não tem conta?';
-  document.getElementById('toggle-btn').textContent = isRegisterMode ? 'Fazer login' : 'Criar conta grátis';
-  document.getElementById('headline').innerHTML = isRegisterMode ? 'Crie seu<br><span>sistema LifeOS.</span>' : 'Entre no seu<br><span>sistema LifeOS.</span>';
-}
-function showOverlay(msg){ showToast(msg || 'Aguardando conexão'); }
-function hideOverlay(){ document.getElementById('redirect-overlay')?.classList.remove('active'); }
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
 </html>
