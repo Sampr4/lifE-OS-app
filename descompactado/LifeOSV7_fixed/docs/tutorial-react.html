@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tutorial React — LifeOS</title>
+  <style>
+    body { font-family: 'Segoe UI', system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.55; color: #111; }
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.15rem; margin-top: 1.75rem; }
+    code, pre { background: #f4f4f5; padding: .15rem .35rem; border-radius: 4px; font-size: .9rem; }
+    pre { padding: .75rem; overflow: auto; }
+    @media print { body { margin: 1cm; } a { color: #000; text-decoration: none; } }
+  </style>
+</head>
+<body>
+  <h1>Tutorial rápido: React no PC e LifeOS</h1>
+  <p>Este guia é para iniciantes. Para gerar um PDF: <strong>Ctrl+P</strong> (ou Cmd+P) → <strong>Salvar como PDF</strong>.</p>
+
+  <h2>1. Instalar Node.js (inclui npm)</h2>
+  <p>Baixe o instalador LTS em <a href="https://nodejs.org/">https://nodejs.org/</a>, execute e marque a opção de adicionar ao PATH. Feche e reabra o terminal.</p>
+  <p>Confira:</p>
+  <pre>node -v
+npm -v</pre>
+
+  <h2>2. Abrir o projeto no VS Code</h2>
+  <p>Menu <strong>Ficheiro → Abrir pasta</strong> e escolha <code>LifeOSV7</code> (ou a pasta onde extraiu o projeto).</p>
+
+  <h2>3. Instalar dependências do React (shell LifeOS)</h2>
+  <pre>cd frontend\react-app
+npm install</pre>
+
+  <h2>4. Rodar o React em desenvolvimento</h2>
+  <p>Com o Flask em <code>http://127.0.0.1:5000</code> (porta padrão do LifeOS):</p>
+  <pre>npm run dev</pre>
+  <p>O Vite abrirá algo como <code>http://localhost:5173</code>. O ficheiro <code>vite.config.ts</code> já faz proxy de <code>/api</code> para o backend.</p>
+
+  <h2>5. Dependências usadas</h2>
+  <ul>
+    <li><code>react</code> e <code>react-dom</code> — interface</li>
+    <li><code>vite</code> — servidor e empacotador de desenvolvimento</li>
+    <li><code>typescript</code> — tipos (opcional mas recomendado)</li>
+  </ul>
+
+  <h2>6. Ligar React ao backend</h2>
+  <p>O token Firebase fica em <code>localStorage</code> como <code>lifeos_token</code> depois do login no <code>index.html</code>.</p>
+  <p>No shell React, pode colar esse token na página de teste ou definir <code>VITE_API_URL</code> se o API estiver noutro domínio.</p>
+  <p>Pedidos autenticados usam o cabeçalho: <code>Authorization: Bearer &lt;token&gt;</code>.</p>
+
+  <h2>7. Testar a dashboard</h2>
+  <ol>
+    <li>Inicie o Flask (<code>python main.py</code> na pasta <code>backend</code>).</li>
+    <li>Abra <code>frontend/index.html</code> (com servidor HTTP local) e faça login + onboarding.</li>
+    <li>Confirme que a dashboard carrega (não fica em “Iniciando dashboard…”).</li>
+    <li>Opcional: no React shell, cole o token e verifique se a prévia mostra nome/profissão.</li>
+  </ol>
+
+  <h2>8. Como saber se “Iniciando dashboard…” foi resolvido</h2>
+  <ul>
+    <li>O texto muda para “Carregando seus dados…” e o overlay some.</li>
+    <li>O nome aparece no canto superior direito e na saudação “Olá, …”.</li>
+    <li>Em caso de erro de rede, aparece mensagem de erro ou retry — não um loading eterno na primeira mensagem.</li>
+  </ul>
+
+  <p style="margin-top:2rem;font-size:.9rem;color:#666;">LifeOS — documento gerado para impressão/PDF.</p>
+</body>
+</html>

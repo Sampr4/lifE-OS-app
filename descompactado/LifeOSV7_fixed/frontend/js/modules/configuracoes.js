@@ -1,0 +1,1 @@
+/* renderConfiguracoes definida em perfil.js */

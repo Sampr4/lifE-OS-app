@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: lifeos
+    runtime: python
+    rootDir: descompactado/LifeOSV7_fixed/frontend
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn --chdir backend "main:create_app()" --bind 0.0.0.0:$PORT
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FIREBASE_CREDENTIALS
+        value: /etc/secrets/serviceAccountKey.json
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: AI_ONBOARDING_KEY
+        sync: false
+      - key: AI_PLANNING_KEY
+        sync: false
+      - key: AI_DAILY_KEY
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: WEBHOOK_EMAIL_ENABLED
+        value: "false"

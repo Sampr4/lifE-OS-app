@@ -1,0 +1,1 @@
+Corrigido fallback visual do dashboard e query de daily_reminders sem reminder_date.

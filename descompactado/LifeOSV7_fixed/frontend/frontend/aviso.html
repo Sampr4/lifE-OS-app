@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LifeOS — Aviso</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --bg-s: #ffffff;
+      --text: #1a1a1a;
+      --t2: #4b5563;
+      --t3: #9ca3af;
+      --accent: #8b5cf6;
+      --accent-dark: #7c3aed;
+      --border: #e5e7eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .aviso-container {
+      background: var(--bg-s);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      max-width: 480px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .aviso-header {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      padding: 2rem;
+      text-align: center;
+      color: white;
+    }
+
+    .aviso-icon {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .aviso-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    .aviso-subtitle {
+      font-size: 0.875rem;
+      opacity: 0.9;
+    }
+
+    .aviso-content {
+      padding: 1.5rem;
+    }
+
+    .aviso-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .aviso-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .aviso-card-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--t3);
+      margin-bottom: 0.5rem;
+    }
+
+    .aviso-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+    }
+
+    .aviso-item:not(:last-child) {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .aviso-bullet {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 0.4rem;
+      flex-shrink: 0;
+    }
+
+    .aviso-bullet.success { background: var(--success); }
+    .aviso-bullet.warning { background: var(--warning); }
+    .aviso-bullet.danger { background: var(--danger); }
+    .aviso-bullet.info { background: var(--accent); }
+
+    .aviso-text {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--t2);
+    }
+
+    .aviso-text strong {
+      color: var(--text);
+    }
+
+    .aviso-footer {
+      padding: 1rem 1.5rem;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .aviso-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .aviso-btn:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    .aviso-timestamp {
+      font-size: 0.75rem;
+      color: var(--t3);
+      margin-top: 0.75rem;
+    }
+
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f0f0f;
+        --bg-s: #1a1a1a;
+        --text: #f5f5f5;
+        --t2: #a3a3a3;
+        --t3: #525252;
+        --border: #2a2a2a;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="aviso-container">
+    <div class="aviso-header">
+      <div class="aviso-logo">
+        <span>✓</span>
+      </div>
+      <h1 class="aviso-title">LifeOS Shell Visual</h1>
+      <p class="aviso-subtitle">Tela preservada apenas como interface. Sem backend, sem autenticação, sem redirecionamento e sem dados locais.</p>
+    </div>
+
+    <div class="aviso-content">
+      <div class="aviso-card">
+        <div class="aviso-card-title">Estado atual</div>
+        <p class="aviso-text">Conteúdo será carregado futuramente quando a conexão correta com o backend for refeita.</p>
+      </div>
+
+      <div class="aviso-card">
+        <div class="aviso-card-title">Segurança visual</div>
+        <p class="aviso-text">Esta página não salva preferências, não consulta APIs e não força navegação automática.</p>
+      </div>
+    </div>
+
+    <div class="aviso-footer">
+      <button class="aviso-btn" onclick="fecharAviso()">Entendido</button>
+      <p class="aviso-timestamp">LifeOS frontend reset • shell visual</p>
+    </div>
+  </div>
+
+  <script>
+  'use strict';
+  function fecharAviso() {
+    const btn = document.querySelector('.aviso-btn');
+    if (btn) btn.textContent = 'Aguardando conexão';
+  }
+  </script>
+</body>
+</html>

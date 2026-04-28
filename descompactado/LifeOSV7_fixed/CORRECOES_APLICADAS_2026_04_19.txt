@@ -1,0 +1,8 @@
+Correções aplicadas em 2026-04-19:
+- fix do erro name r is not defined na geração de plano
+- ajuste de profession_attributes para JSONB nativo
+- correção de context.py para checkin_sessions e reference_month com data válida
+- endurecimento da geração inicial para só cair em fallback após 3 tentativas inválidas
+- marcação de source ai/fallback nos registros gerados
+- ajuste do finalize do onboarding para não fingir sucesso silencioso
+- migration adicionada em db_migrations/2026_04_19_fix_profession_attributes_and_ai.sql

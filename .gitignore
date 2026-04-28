@@ -1,0 +1,56 @@
+# Segredos / ambiente
+.env
+.env.*
+!.env.example
+serviceAccountKey.json
+*service*account*.json
+*firebase*admin*.json
+*credential*.json
+*credentials*.json
+*secret*.json
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+env/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / frontend
+node_modules/
+dist/
+build/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+
+# Logs
+*.log
+logs/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Banco local / uploads
+*.sqlite
+*.sqlite3
+*.db
+uploads/
+tmp/
+temp/
+
+# ZIPs
+*.zip
